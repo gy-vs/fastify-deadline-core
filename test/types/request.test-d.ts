@@ -66,6 +66,7 @@ const getHandler: RouteHandler = function (request, _reply) {
   expectType<string>(request.method)
   expectType<Readonly<RequestRouteOptions>>(request.routeOptions)
   expectType<boolean>(request.is404)
+  expectType<AbortSignal>(request.signal)
   expectType<string>(request.hostname)
   expectType<string>(request.host)
   expectType<number>(request.port)
@@ -79,6 +80,7 @@ const getHandler: RouteHandler = function (request, _reply) {
   expectType<RouteHandlerMethod>(request.routeOptions.handler)
   expectType<string | undefined>(request.routeOptions.url)
   expectType<string | undefined>(request.routeOptions.version)
+  expectType<number>(request.routeOptions.handlerTimeout)
 
   expectType<RequestHeadersDefault & RawRequestDefaultExpression['headers']>(request.headers)
   request.headers = {}

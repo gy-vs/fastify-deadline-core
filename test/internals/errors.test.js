@@ -5,7 +5,7 @@ const errors = require('../../lib/errors')
 const { readFileSync } = require('node:fs')
 const { resolve } = require('node:path')
 
-const expectedErrors = 86
+const expectedErrors = 88
 
 test(`should expose ${expectedErrors} errors`, t => {
   t.plan(1)
@@ -327,6 +327,16 @@ test('FST_ERR_HOOK_TIMEOUT', t => {
   t.assert.strictEqual(error.code, 'FST_ERR_HOOK_TIMEOUT')
   t.assert.strictEqual(error.message, "A callback for '%s' hook%s timed out. You may have forgotten to call 'done' function or to resolve a Promise")
   t.assert.strictEqual(error.statusCode, 500)
+  t.assert.ok(error instanceof Error)
+})
+
+test('FST_ERR_HANDLER_TIMEOUT', t => {
+  t.plan(5)
+  const error = new errors.FST_ERR_HANDLER_TIMEOUT()
+  t.assert.strictEqual(error.name, 'FastifyError')
+  t.assert.strictEqual(error.code, 'FST_ERR_HANDLER_TIMEOUT')
+  t.assert.strictEqual(error.message, "Handler for route '%s' timed out after %s ms")
+  t.assert.strictEqual(error.statusCode, 503)
   t.assert.ok(error instanceof Error)
 })
 
@@ -736,6 +746,16 @@ test('FST_ERR_ROUTE_BODY_LIMIT_OPTION_NOT_INT', t => {
   t.assert.strictEqual(error.name, 'FastifyError')
   t.assert.strictEqual(error.code, 'FST_ERR_ROUTE_BODY_LIMIT_OPTION_NOT_INT')
   t.assert.strictEqual(error.message, "'bodyLimit' option must be an integer > 0. Got '%s'")
+  t.assert.strictEqual(error.statusCode, 500)
+  t.assert.ok(error instanceof TypeError)
+})
+
+test('FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT', t => {
+  t.plan(5)
+  const error = new errors.FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT()
+  t.assert.strictEqual(error.name, 'FastifyError')
+  t.assert.strictEqual(error.code, 'FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT')
+  t.assert.strictEqual(error.message, "'handlerTimeout' option must be an integer > 0. Got '%s'")
   t.assert.strictEqual(error.statusCode, 500)
   t.assert.ok(error instanceof TypeError)
 })

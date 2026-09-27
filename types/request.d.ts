@@ -25,6 +25,7 @@ export interface RequestRouteOptions<ContextConfig = ContextConfigDefault, Schem
   // `url` can be `undefined` for instance when `request.is404` is true
   url: string | undefined;
   bodyLimit: number;
+  handlerTimeout: number;
   attachValidation: boolean;
   logLevel: string;
   exposeHeadRoute: boolean;
@@ -82,6 +83,13 @@ export interface FastifyRequest<RouteGeneric extends RouteGenericInterface = Rou
   readonly routeOptions: Readonly<RequestRouteOptions<ContextConfig, SchemaCompiler>>
   readonly is404: boolean;
   readonly socket: RawRequest['socket'];
+  /**
+   * An `AbortSignal` that is aborted when the client closes the connection
+   * before the response has been sent, or when the route's `handlerTimeout`
+   * (if configured) expires. In the latter case `signal.reason` is the
+   * `FST_ERR_HANDLER_TIMEOUT` error, otherwise it is a standard `AbortError`.
+   */
+  readonly signal: AbortSignal;
 
   getValidationFunction(httpPart: HTTPRequestPart): ValidationFunction
   getValidationFunction(schema: { [key: string]: any }): ValidationFunction

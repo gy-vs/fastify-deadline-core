@@ -107,6 +107,12 @@ type LowerCaseHTTPMethods = 'delete' | 'get' | 'head' | 'patch' | 'post' | 'put'
     }
   }))
 
+  expectType<FastifyInstance>(fastify()[lowerCaseMethod]('/', {
+    handler: routeHandler,
+    bodyLimit: 1000,
+    handlerTimeout: 1000
+  }))
+
   interface BodyInterface { prop: string }
   interface QuerystringInterface { prop: number }
   interface ParamsInterface { prop: boolean }

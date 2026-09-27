@@ -44,6 +44,7 @@
     - [FST_ERR_HOOK_NOT_SUPPORTED](#fst_err_hook_not_supported)
     - [FST_ERR_MISSING_MIDDLEWARE](#fst_err_missing_middleware)
     - [FST_ERR_HOOK_TIMEOUT](#fst_err_hook_timeout)
+    - [FST_ERR_HANDLER_TIMEOUT](#fst_err_handler_timeout)
     - [FST_ERR_LOG_INVALID_DESTINATION](#fst_err_log_invalid_destination)
     - [FST_ERR_LOG_INVALID_LOGGER](#fst_err_log_invalid_logger)
     - [FST_ERR_LOG_INVALID_LOGGER_INSTANCE](#fst_err_log_invalid_logger_instance)
@@ -84,6 +85,7 @@
     - [FST_ERR_ROUTE_METHOD_NOT_SUPPORTED](#fst_err_route_method_not_supported)
     - [FST_ERR_ROUTE_BODY_VALIDATION_SCHEMA_NOT_SUPPORTED](#fst_err_route_body_validation_schema_not_supported)
     - [FST_ERR_ROUTE_BODY_LIMIT_OPTION_NOT_INT](#fst_err_route_body_limit_option_not_int)
+    - [FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT](#fst_err_route_handler_timeout_option_not_int)
     - [FST_ERR_ROUTE_REWRITE_NOT_STR](#fst_err_route_rewrite_not_str)
     - [FST_ERR_REOPENED_CLOSE_SERVER](#fst_err_reopened_close_server)
     - [FST_ERR_REOPENED_SERVER](#fst_err_reopened_server)
@@ -316,6 +318,7 @@ Below is a table with all the error codes used by Fastify.
 | <a id="fst_err_hook_not_supported">FST_ERR_HOOK_NOT_SUPPORTED</a> | The hook is not supported. | Use a supported hook. | #4554 |
 | <a id="fst_err_missing_middleware">FST_ERR_MISSING_MIDDLEWARE</a> | You must register a plugin for handling middlewares, visit [`Middleware`](./Middleware.md) for more info. | Register a plugin for handling middlewares. | #2014 |
 | <a id="fst_err_hook_timeout">FST_ERR_HOOK_TIMEOUT</a> | A callback for a hook timed out. | Increase the timeout for the hook. | #3106 |
+| <a id="fst_err_handler_timeout">FST_ERR_HANDLER_TIMEOUT</a> | The route did not send a response within the configured `handlerTimeout`. | Respond within the timeout or increase the [`handlerTimeout`](./Server.md#handlertimeout) option. | - |
 | <a id="fst_err_log_invalid_destination">FST_ERR_LOG_INVALID_DESTINATION</a> | The logger does not accept the specified destination. | Use a `'stream'` or a `'file'` as the destination. | #1168 |
 | <a id="fst_err_log_invalid_logger">FST_ERR_LOG_INVALID_LOGGER</a> | The logger should have all these methods: `'info'`, `'error'`, `'debug'`, `'fatal'`, `'warn'`, `'trace'`, `'child'`. | Use a logger with all the required methods. | #4520 |
 | <a id="fst_err_log_invalid_logger_instance">FST_ERR_LOG_INVALID_LOGGER_INSTANCE</a> | The `loggerInstance` only accepts a logger instance, not a configuration object. | To pass a configuration object, use `'logger'` instead. | #5020 |
@@ -356,6 +359,7 @@ Below is a table with all the error codes used by Fastify.
 | <a id="fst_err_route_method_not_supported">FST_ERR_ROUTE_METHOD_NOT_SUPPORTED</a> | Method is not supported for the route. | Use a supported method. | #4554 |
 | <a id="fst_err_route_body_validation_schema_not_supported">FST_ERR_ROUTE_BODY_VALIDATION_SCHEMA_NOT_SUPPORTED</a> | Body validation schema route is not supported. | Use a different different method for the route. | #4554 |
 | <a id="fst_err_route_body_limit_option_not_int">FST_ERR_ROUTE_BODY_LIMIT_OPTION_NOT_INT</a> | `bodyLimit` option must be an integer. | Use an integer for the `bodyLimit` option. | #4554 |
+| <a id="fst_err_route_handler_timeout_option_not_int">FST_ERR_ROUTE_HANDLER_TIMEOUT_OPTION_NOT_INT</a> | `handlerTimeout` option must be an integer greater than 0. | Use an integer greater than 0 for the `handlerTimeout` option. | - |
 | <a id="fst_err_route_rewrite_not_str">FST_ERR_ROUTE_REWRITE_NOT_STR</a> | `rewriteUrl` needs to be of type `string`. | Use a string for the `rewriteUrl`. | #4554 |
 | <a id="fst_err_reopened_close_server">FST_ERR_REOPENED_CLOSE_SERVER</a> | Fastify has already been closed and cannot be reopened. | - | #2415 |
 | <a id="fst_err_reopened_server">FST_ERR_REOPENED_SERVER</a> | Fastify is already listening. | - | #2415 |

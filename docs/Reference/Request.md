@@ -40,12 +40,22 @@ Request is a core Fastify object containing the following fields:
   case of internal re-routing.
 - `is404` - `true` if request is being handled by 404 handler, `false` otherwise.
 - `socket` - The underlying connection of the incoming request.
+- `signal` - An
+  [`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)
+  that is aborted when the client closes the connection before the response
+  has been sent, or when the route's [`handlerTimeout`](./Server.md#handlertimeout)
+  expires. In the first case `signal.reason` is a standard `AbortError`; in
+  the second it is the `FST_ERR_HANDLER_TIMEOUT` error, so the two cases can
+  be told apart via `signal.reason.code`. The signal can be passed directly to
+  APIs that accept an `AbortSignal` (e.g. `fetch`, `undici`, or database
+  drivers) to cooperatively cancel work for the request.
 - `context` - Deprecated, use `request.routeOptions.config` instead. A Fastify
   internal object. Do not use or modify it directly. It is useful to access one
   special key:
   - `context.config` - The route [`config`](./Routes.md#routes-config) object.
 - `routeOptions` - The route [`option`](./Routes.md#routes-options) object.
   - `bodyLimit` - Either server limit or route limit.
+  - `handlerTimeout` - Either server timeout or route timeout.
   - `config` - The [`config`](./Routes.md#routes-config) object for this route.
   - `method` - The HTTP method for the route.
   - `url` - The path of the URL to match this route.
@@ -111,6 +121,7 @@ fastify.post('/:params', options, function (request, reply) {
   console.log(request.url)
   console.log(request.routeOptions.method)
   console.log(request.routeOptions.bodyLimit)
+  console.log(request.routeOptions.handlerTimeout)
   console.log(request.routeOptions.method)
   console.log(request.routeOptions.url)
   console.log(request.routeOptions.attachValidation)

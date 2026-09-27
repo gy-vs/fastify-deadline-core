@@ -17,6 +17,7 @@ describes the properties available in that options object.
   - [`forceCloseConnections`](#forcecloseconnections)
   - [`maxRequestsPerSocket`](#maxrequestspersocket)
   - [`requestTimeout`](#requesttimeout)
+  - [`handlerTimeout`](#handlertimeout)
   - [`bodyLimit`](#bodylimit)
   - [`onProtoPoisoning`](#onprotopoisoning)
   - [`onConstructorPoisoning`](#onconstructorpoisoning)
@@ -223,6 +224,37 @@ in front.
 
 > ℹ️ Note:
 >  At the time of writing, only node >= v14.11.0 supports this option
+
+### `handlerTimeout`
+<a id="factory-handler-timeout"></a>
+
++ Default: `0` (no timeout)
+
+Defines the maximum number of milliseconds a request may spend being processed
+once the router has matched it to a route. The budget covers the whole request
+lifecycle: `onRequest`, `preParsing`, `preValidation` and `preHandler` hooks,
+body parsing, validation, the handler itself, and serialization, up to the
+response being sent.
+
+When the timeout expires, the client receives a `503 Service Unavailable`
+response produced by the `FST_ERR_HANDLER_TIMEOUT` error, which is routed
+through the error handler of the route's encapsulation context (see
+[`setErrorHandler`](#seterrorhandler) and the route [`errorHandler`
+option](./Routes.md#routes-options)). The timeout is cooperative: in-flight
+asynchronous work is not interrupted, but [`request.signal`](./Request.md) is
+aborted with the `FST_ERR_HANDLER_TIMEOUT` error as its reason, so handlers
+can stop their own work (e.g. pass the signal to `fetch` or a database
+driver).
+
+Unlike [`connectionTimeout`](#connectiontimeout) and
+[`requestTimeout`](#requesttimeout), which operate on the socket, this limit
+applies to every single request, including requests multiplexed on the same
+keep-alive connection.
+
+A route can override this value with its own [`handlerTimeout`
+option](./Routes.md#routes-options). Note that a route cannot disable a
+server-level `handlerTimeout` by setting it to `0`: route values must be
+integers greater than `0`.
 
 ### `bodyLimit`
 <a id="factory-body-limit"></a>
