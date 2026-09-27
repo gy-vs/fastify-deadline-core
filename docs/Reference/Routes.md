@@ -115,6 +115,16 @@ fastify.route(options)
   larger than this number of bytes. Must be an integer. You may also set this
   option globally when first creating the Fastify instance with
   `fastify(options)`. Defaults to `1048576` (1 MiB).
+* `handlerTimeout`: the maximum number of milliseconds this route has to send a
+  response before the client receives a `503 Service Unavailable` reply with a
+  `FST_ERR_HANDLER_TIMEOUT` error. Must be an integer greater than `0`; when
+  set, it overrides the server-wide
+  [`handlerTimeout`](./Server.md#handlertimeout) option, otherwise the server
+  value applies. A route cannot disable a server-wide timeout, it can only
+  replace it with another positive value. The effective value is exposed to
+  handlers as `request.routeOptions.handlerTimeout`, and
+  [`request.signal`](./Request.md#signal) is aborted when the timeout
+  elapses.
 * `logLevel`: set log level for this route. See below.
 * `logSerializers`: set serializers to log for this route.
 * `config`: object used to store custom configuration.

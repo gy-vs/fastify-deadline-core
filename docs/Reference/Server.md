@@ -17,6 +17,7 @@ describes the properties available in that options object.
   - [`forceCloseConnections`](#forcecloseconnections)
   - [`maxRequestsPerSocket`](#maxrequestspersocket)
   - [`requestTimeout`](#requesttimeout)
+  - [`handlerTimeout`](#handlertimeout)
   - [`bodyLimit`](#bodylimit)
   - [`onProtoPoisoning`](#onprotopoisoning)
   - [`onConstructorPoisoning`](#onconstructorpoisoning)
@@ -223,6 +224,38 @@ in front.
 
 > ℹ️ Note:
 >  At the time of writing, only node >= v14.11.0 supports this option
+
+### `handlerTimeout`
+<a id="factory-handler-timeout"></a>
+
++ Default: `0` (no timeout)
+
+Defines the maximum number of milliseconds a route has to send a response,
+counted per request from the moment the router matches it to a route until the
+response is sent. The whole request lifecycle is covered: `onRequest`,
+`preParsing`, `preValidation` and `preHandler` hooks, body parsing, validation,
+the handler itself, serialization and the `onSend` hooks.
+
+Unlike [`connectionTimeout`](#connectiontimeout) and
+[`requestTimeout`](#requesttimeout), which are enforced by Node.js on the
+socket, this timeout is enforced by Fastify on every single request, so it also
+applies to requests multiplexed on a reused keep-alive connection.
+
+When the timeout elapses, the client receives a `503 Service Unavailable`
+response produced by a [`FST_ERR_HANDLER_TIMEOUT`](./Errors.md#fst_err_handler_timeout)
+error. The error is routed to the error handler of the encapsulation context
+the route belongs to, so it can be customized with
+[`setErrorHandler`](#seterrorhandler) or with the route `errorHandler` option.
+
+The timeout is cooperative: the handler is not interrupted when the timeout
+elapses. It can observe [`request.signal`](./Request.md#signal) — an
+`AbortSignal` aborted with the `FST_ERR_HANDLER_TIMEOUT` error — to stop its
+own work, e.g. by passing the signal to `fetch`, `undici` or a database driver.
+
+A single route can override this value with its own
+[`handlerTimeout`](./Routes.md#routes-options) option, which must be an integer
+greater than `0`: when the server-wide timeout is set, a route cannot disable
+it, it can only replace it with another positive value.
 
 ### `bodyLimit`
 <a id="factory-body-limit"></a>
@@ -2229,6 +2262,7 @@ The properties that can currently be exposed are:
 - connectionTimeout
 - keepAliveTimeout
 - bodyLimit
+- handlerTimeout
 - caseSensitive
 - http2
 - https (it will return `false`/`true` or `{ allowHTTP1: true/false }` if

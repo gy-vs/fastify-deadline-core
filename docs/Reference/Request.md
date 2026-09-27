@@ -40,12 +40,17 @@ Request is a core Fastify object containing the following fields:
   case of internal re-routing.
 - `is404` - `true` if request is being handled by 404 handler, `false` otherwise.
 - `socket` - The underlying connection of the incoming request.
+- [`signal`](#signal) - An `AbortSignal` that is aborted when the route
+  [`handlerTimeout`](./Server.md#handlertimeout) elapses or when the client
+  closes the connection before the response has been sent.
 - `context` - Deprecated, use `request.routeOptions.config` instead. A Fastify
   internal object. Do not use or modify it directly. It is useful to access one
   special key:
   - `context.config` - The route [`config`](./Routes.md#routes-config) object.
 - `routeOptions` - The route [`option`](./Routes.md#routes-options) object.
   - `bodyLimit` - Either server limit or route limit.
+  - `handlerTimeout` - Either server timeout or route timeout, `0` means no
+    timeout.
   - `config` - The [`config`](./Routes.md#routes-config) object for this route.
   - `method` - The HTTP method for the route.
   - `url` - The path of the URL to match this route.
@@ -122,6 +127,41 @@ fastify.post('/:params', options, function (request, reply) {
   request.log.info('some info')
 })
 ```
+
+### Signal
+<a id="signal"></a>
+
+The `request.signal` is a getter that returns a standard
+[`AbortSignal`](https://developer.mozilla.org/en-US/docs/Web/API/AbortSignal)
+bound to the lifetime of the request. It can be passed directly to APIs that
+accept an `AbortSignal`, such as `fetch`, `undici` or database drivers, so that
+ongoing work can be stopped cooperatively.
+
+The signal is aborted in two situations, distinguishable through
+`request.signal.reason`:
+
+- The route [`handlerTimeout`](./Server.md#handlertimeout) elapsed before a
+  response was sent. The `reason` is the
+  [`FST_ERR_HANDLER_TIMEOUT`](./Errors.md#fst_err_handler_timeout) error that
+  is also passed to the route error handler, i.e.
+  `request.signal.reason.code === 'FST_ERR_HANDLER_TIMEOUT'`.
+- The client closed the connection before the response was sent. The `reason`
+  is a standard `AbortError`. This also applies to routes without a
+  `handlerTimeout` configured.
+
+```js
+fastify.get('/data', { handlerTimeout: 1000 }, async function (request, reply) {
+  const response = await fetch('https://example.com/data', {
+    signal: request.signal
+  })
+  return response.json()
+})
+```
+
+The signal is created lazily on first access: requests that never read
+`request.signal` and have no `handlerTimeout` configured do not pay any
+overhead for it.
+
 ### .getValidationFunction(schema | httpPart)
 <a id="getvalidationfunction"></a>
 

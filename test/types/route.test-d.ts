@@ -59,6 +59,15 @@ const asyncPreHandler = async (request: FastifyRequest) => {
 
 fastify().get('/', { preHandler: asyncPreHandler }, async () => 'this is an example')
 
+fastify().get('/', { handlerTimeout: 1000 }, async () => 'this is an example')
+
+fastify().route({
+  method: 'GET',
+  url: '/',
+  handlerTimeout: 1000,
+  handler: routeHandler
+})
+
 fastify().get(
   '/',
   { config: { foo: 'bar', bar: 100, includeMessage: true } },

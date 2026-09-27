@@ -34,6 +34,7 @@ test('without options passed to Fastify, initialConfig should expose default val
     keepAliveTimeout: 72000,
     maxRequestsPerSocket: 0,
     requestTimeout: 0,
+    handlerTimeout: 0,
     bodyLimit: 1024 * 1024,
     caseSensitive: true,
     allowUnsafeRegex: false,
@@ -55,7 +56,7 @@ test('without options passed to Fastify, initialConfig should expose default val
 })
 
 test('Fastify.initialConfig should expose all options', t => {
-  t.plan(22)
+  t.plan(23)
 
   const serverFactory = (handler, opts) => {
     const server = http.createServer((req, res) => {
@@ -93,6 +94,7 @@ test('Fastify.initialConfig should expose all options', t => {
     connectionTimeout: 0,
     keepAliveTimeout: 72000,
     bodyLimit: 1049600,
+    handlerTimeout: 5000,
     onProtoPoisoning: 'remove',
     serverFactory,
     caseSensitive: true,
@@ -122,6 +124,7 @@ test('Fastify.initialConfig should expose all options', t => {
   t.assert.strictEqual(fastify.initialConfig.connectionTimeout, 0)
   t.assert.strictEqual(fastify.initialConfig.keepAliveTimeout, 72000)
   t.assert.strictEqual(fastify.initialConfig.bodyLimit, 1049600)
+  t.assert.strictEqual(fastify.initialConfig.handlerTimeout, 5000)
   t.assert.strictEqual(fastify.initialConfig.onProtoPoisoning, 'remove')
   t.assert.strictEqual(fastify.initialConfig.caseSensitive, true)
   t.assert.strictEqual(fastify.initialConfig.useSemicolonDelimiter, false)
@@ -273,6 +276,7 @@ test('Should not have issues when passing stream options to Pino.js', (t, done) 
       keepAliveTimeout: 72000,
       maxRequestsPerSocket: 0,
       requestTimeout: 0,
+      handlerTimeout: 0,
       bodyLimit: 1024 * 1024,
       caseSensitive: true,
       allowUnsafeRegex: false,
